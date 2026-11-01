@@ -32,8 +32,16 @@ button{border:0;border-radius:10px;padding:12px 16px;font-weight:750;font-size:1
 button:active{transform:translateY(1px)}
 .history-row{display:flex;gap:8px;align-items:center;justify-content:space-between;padding:9px 0;border-bottom:1px solid #e3eaf1;flex-wrap:wrap}
 .history-row:last-child{border-bottom:0}
-.login-screen{position:fixed;inset:0;z-index:1000;display:grid;place-items:center;padding:20px;background:linear-gradient(135deg,#eaf3fb,#f7fafc)}
-.login-box{width:min(420px,100%);background:#fff;border-radius:18px;padding:28px;box-shadow:0 18px 50px #163b5c2b}
+.login-screen{position:fixed;inset:0;z-index:1000;display:grid;place-items:center;padding:20px;background:#080b0f url('login-cardioequipo.png') center/cover no-repeat}
+.login-box{width:min(420px,100%);background:rgba(9,13,18,.94);border:1px solid rgba(255,255,255,.16);border-radius:18px;padding:28px;box-shadow:0 18px 50px #0008;backdrop-filter:blur(8px)}
+.login-box .field label{color:#e6edf5}
+.login-box input{color:#fff;background:#101820;border-color:#7d8792}
+.login-box h1{color:#fff}
+.login-box .login-subtitle{color:#bcc8d4}
+.password-field{position:relative}
+.password-field input{padding-right:48px}
+.password-toggle{position:absolute!important;right:6px;bottom:6px;width:36px!important;height:30px;padding:0!important;background:#101820;color:#fff;border:1px solid transparent;font-size:18px;box-shadow:none;margin:0!important}
+.password-toggle:hover{background:#1b2835}
 .login-box h1{font-size:24px;text-align:center;margin-bottom:6px;color:var(--blue)}
 .login-box .login-subtitle{text-align:center;color:var(--muted);font-size:13px;margin-bottom:22px}
 .login-box button{width:100%;margin-top:14px}
@@ -101,9 +109,10 @@ button:active{transform:translateY(1px)}
    <label for="loginUsuario">Usuário</label>
    <input id="loginUsuario" autocomplete="username" value="Thiago Ferreira" required>
   </div>
-  <div class="field" style="margin-top:12px">
+  <div class="field password-field" style="margin-top:12px">
    <label for="loginSenha">Senha</label>
    <input id="loginSenha" type="password" autocomplete="current-password" required>
+   <button id="toggleLoginPassword" class="password-toggle" type="button" aria-label="Mostrar senha" title="Mostrar senha">👁</button>
   </div>
   <div id="loginError" class="login-error" role="alert"></div>
   <button class="primary" type="submit">Entrar</button>
@@ -283,6 +292,16 @@ function unlockApp(){
  document.getElementById('loginScreen').hidden=true;
  document.getElementById('appContent').hidden=false;
 }
+function toggleLoginPassword(){
+ const input=document.getElementById('loginSenha');
+ const button=document.getElementById('toggleLoginPassword');
+ const show=input.type==='password';
+ input.type=show?'text':'password';
+ button.textContent=show?'🙈':'👁';
+ button.setAttribute('aria-label',show?'Ocultar senha':'Mostrar senha');
+ button.title=show?'Ocultar senha':'Mostrar senha';
+}
+document.getElementById('toggleLoginPassword').addEventListener('click',toggleLoginPassword);
 document.getElementById('loginForm').addEventListener('submit',async event=>{
  event.preventDefault();
  const usuario=document.getElementById('loginUsuario').value.trim();
