@@ -112,7 +112,7 @@ button:active{transform:translateY(1px)}
   <div class="field password-field" style="margin-top:12px">
    <label for="loginSenha">Senha</label>
    <input id="loginSenha" type="password" autocomplete="current-password" required>
-   <button id="toggleLoginPassword" class="password-toggle" type="button" aria-label="Mostrar senha" title="Mostrar senha">👁</button>
+   <button id="toggleLoginPassword" class="password-toggle" type="button" aria-label="Mostrar senha" title="Mostrar senha">🙈</button>
   </div>
   <div id="loginError" class="login-error" role="alert"></div>
   <button class="primary" type="submit">Entrar</button>
@@ -297,7 +297,7 @@ function toggleLoginPassword(){
  const button=document.getElementById('toggleLoginPassword');
  const show=input.type==='password';
  input.type=show?'text':'password';
- button.textContent=show?'🙈':'👁';
+ button.textContent=show?'👁':'🙈';
  button.setAttribute('aria-label',show?'Ocultar senha':'Mostrar senha');
  button.title=show?'Ocultar senha':'Mostrar senha';
 }
