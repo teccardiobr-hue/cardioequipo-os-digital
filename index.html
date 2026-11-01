@@ -203,8 +203,6 @@ button:active{transform:translateY(1px)}
  <div class="note">O botão do WhatsApp tenta enviar o PDF pelo compartilhamento do aparelho. O PDF também é salvo na pasta de Downloads, sincronizada pelo OneDrive. No computador, escolha “Salvar como PDF” se for solicitado.</div>
  <div class="actions">
   <button class="green" onclick="sendWhatsAppPdf()">Enviar OS por WhatsApp em PDF</button>
-  <button class="primary" onclick="savePdfOneDrive()">Salvar PDF no OneDrive</button>
-  <button onclick="savePdfAndPrint()">Salvar PDF / Imprimir</button>
   <button class="outline" onclick="finishAndPrint()">Finalizar OS / Gerar PDF</button>
   <button class="outline" onclick="clearForm()">Nova OS</button>
   <button id="installAppButton" class="outline" type="button" onclick="installApp()" hidden>Instalar aplicativo</button>
@@ -607,7 +605,12 @@ function finishAndPrint(){
  if(missing.length){toast('Antes de finalizar, preencha: '+missing.join(', ')+'.');return}
  if(!sigs.sigCliente.data()){toast('Solicite a assinatura do responsável pelo cliente antes de finalizar.');return}
  if(!saveToHistory())return;
- window.print();
+ try{
+  createOsPdf().save(osPdfFileName());
+  toast('OS arquivada e PDF gerado com sucesso.');
+ }catch(error){
+  toast('A OS foi arquivada, mas o PDF não pôde ser gerado.');
+ }
 }
 function validateForPdf(){
  if(!window.jspdf?.jsPDF){toast('O gerador de PDF não carregou. Verifique sua conexão e atualize a página.');return false}
@@ -718,20 +721,6 @@ async function sendWhatsAppPdf(){
  const text=encodeURIComponent('Ordem de Servico OS '+val('os')+' da Cardioequipo concluida. Envie o PDF salvo na pasta de Downloads.');
  window.open('https://wa.me/?text='+text,'_blank','noopener');
  toast('PDF salvo em Downloads. Anexe o arquivo na conversa do WhatsApp.');
-}
-function savePdfOneDrive(){
- if(!validateForPdf())return;
- const pdf=createOsPdf();pdf.save(osPdfFileName());
- toast('PDF salvo em Downloads. Se o OneDrive estiver sincronizado, ele sera enviado para a nuvem automaticamente.');
-}
-function savePdfAndPrint(){
- if(!validateForPdf())return;
- const pdf=createOsPdf();
- const blobUrl=URL.createObjectURL(pdf.output('blob'));
- const win=window.open(blobUrl,'_blank');
- if(!win){URL.revokeObjectURL(blobUrl);toast('Permita pop-ups para visualizar o PDF antes de imprimir.');return}
- toast('PDF aberto para visualização. Use os controles do PDF para imprimir ou salvar.');
- setTimeout(()=>URL.revokeObjectURL(blobUrl),60000);
 }
 function exportBackup(){
  const payload={app:'Cardioequipo OS Digital',version:3,exportedAt:new Date().toISOString(),history:getHistory(),draft:collectData()};

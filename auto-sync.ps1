@@ -8,11 +8,7 @@ git config user.email "223556219+Copilot@users.noreply.github.com"
 function Get-WorkspaceChanges {
     $status = git status --porcelain
     if (-not $status) { return $false }
-
-    if ($status | Where-Object { $_ -match '^(A|M|D|R|C|\?\?) ' }) {
-        return $true
-    }
-    return $false
+    return $true
 }
 
 while ($true) {
