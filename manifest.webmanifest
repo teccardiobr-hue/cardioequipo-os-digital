@@ -1,0 +1,24 @@
+{
+  "name": "Cardioequipo - Ordem de Serviço",
+  "short_name": "OS Cardioequipo",
+  "description": "Aplicativo de atendimento técnico e ordem de serviço da Cardioequipo.",
+  "lang": "pt-BR",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#eef3f8",
+  "theme_color": "#123f70",
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#123f70">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-192.png">
+<title>Cardioequipo | OS Digital</title>
+<style>
+:root{--blue:#124b82;--blue2:#1769aa;--ink:#1e293b;--muted:#64748b;--line:#d8e1ea;--bg:#eef3f8;--green:#16834a}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);font:15px/1.45 system-ui,-apple-system,Segoe UI,sans-serif;color:var(--ink)}
+.app{max-width:980px;margin:auto;padding:18px}.top{display:flex;align-items:center;justify-content:space-between;gap:12px;background:#fff;border-radius:16px;padding:16px 20px;box-shadow:0 5px 20px #163b5c12}
+.brand{font-weight:900;color:var(--blue);font-size:22px;letter-spacing:-.5px}.brand small{display:block;font-size:10px;letter-spacing:1.6px;color:var(--muted)}
+.company-header{display:flex;align-items:center;gap:14px}.company-header .company-logo{width:220px;max-height:88px;object-fit:contain}.company-logo-small{width:190px;max-height:76px;object-fit:contain}
+h1{font-size:19px;margin:0;text-align:right}.sub{font-size:12px;color:var(--muted);text-align:right}
+.card{background:#fff;border-radius:16px;padding:20px;margin-top:16px;box-shadow:0 5px 20px #163b5c0d}
+h2{font-size:16px;color:var(--blue);margin:0 0 14px;display:flex;gap:8px;align-items:center}
+.note{background:#eff7ff;border:1px solid #c9e1f8;border-radius:10px;padding:12px;color:#244d70;font-size:13px}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.grid.three{grid-template-columns:repeat(3,minmax(0,1fr))}
+.field{min-width:0}label{display:block;font-size:12px;font-weight:700;color:#526174;margin:0 0 5px}
+input,textarea,select{width:100%;border:1px solid var(--line);border-radius:9px;padding:11px;font:inherit;color:var(--ink);background:#fff;min-height:42px}
+textarea{min-height:88px;resize:vertical}input:focus,textarea:focus{outline:2px solid #9ac9f0;border-color:var(--blue2)}
+.wide{grid-column:1/-1}.muted{font-size:12px;color:var(--muted)}
+.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+button{border:0;border-radius:10px;padding:12px 16px;font-weight:750;font-size:14px;cursor:pointer;background:#e8eef5;color:#24415e}
+.primary{background:var(--blue);color:white}.green{background:var(--green);color:white}.outline{background:#fff;border:1px solid var(--line)}
+button:active{transform:translateY(1px)}
+.history-row{display:flex;gap:8px;align-items:center;justify-content:space-between;padding:9px 0;border-bottom:1px solid #e3eaf1;flex-wrap:wrap}
+.history-row:last-child{border-bottom:0}
+.sig-clear{width:34px;height:34px;padding:0!important;border-radius:50%;display:grid;place-items:center;font-size:19px;line-height:1;color:#164c78;flex:none}
+.sighead{min-height:34px}
+.signature{border:1px dashed #9aaabd;border-radius:10px;background:#fbfdff;touch-action:none;width:100%;height:160px;display:block}
+.sighead{display:flex;justify-content:space-between;align-items:center;gap:8px;margin:10px 0 6px}
+.status{display:flex;gap:18px;flex-wrap:wrap}.status label{font-weight:500;font-size:14px;display:flex;align-items:center;gap:7px}.status input{width:auto;min-height:0}
+.toast{display:none;margin-top:12px;padding:10px 12px;border-radius:9px;background:#e8f7ee;color:#17643a;font-size:13px}
+.footer{text-align:center;color:#8290a0;font-size:11px;padding:20px}
+#printTemplate{display:none}
+@media(max-width:650px){.app{padding:10px}.top{padding:14px}.brand{font-size:18px}h1{font-size:16px}.grid,.grid.three{grid-template-columns:1fr}.actions button{flex:1 1 100%}.card{padding:15px}}
+@media print{
+  @page{size:A4 portrait;margin:7mm}
+  html,body{width:100%;min-height:0;background:#fff!important}
+  body{margin:0;font-size:8pt;color:#111;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .app{width:100%;max-width:none;margin:0;padding:0}
+
+  /* Imprime o formulário original, em vez da tabela alternativa printTemplate. */
+  .top{display:flex!important;align-items:center;justify-content:space-between;gap:8px;
+       margin:0 0 2mm;padding:1mm 0 2mm;background:#fff;border:0;border-bottom:1px solid var(--blue);
+       border-radius:0;box-shadow:none}
+  .card{display:block!important;margin:0;padding:2mm 0;background:#fff;border:0;
+        border-radius:0;box-shadow:none;break-inside:avoid;page-break-inside:avoid}
+  .card.no-print,.no-print,.actions,.note,.footer,.muted.help{display:none!important}
+  #printTemplate{display:none!important}
+
+  .company-header{gap:5mm}
+  .company-header .company-logo{width:32mm;max-height:13mm;object-fit:contain}
+  .brand{font-size:12pt;line-height:1.15;color:var(--blue)}
+  .brand small{font-size:5pt;line-height:1.25;letter-spacing:.25px;color:#333}
+  h1{font-size:10pt}
+  .sub{font-size:6pt;color:#333}
+
+  h2{font-size:8pt;margin:1mm 0 1.5mm;gap:4px}
+  .grid{gap:2mm}
+  .grid.three{grid-template-columns:repeat(3,minmax(0,1fr));gap:2mm}
+  .field{min-width:0;break-inside:avoid;page-break-inside:avoid}
+  label{font-size:6pt;color:#222;margin:0 0 .5mm}
+  input,textarea,select{width:100%;border:1px solid #888;border-radius:0;padding:1px 2px;
+      font-size:6.5pt;line-height:1.15;min-height:5mm;height:5mm;background:#fff!important;color:#111}
+  textarea{resize:none;overflow:hidden;min-height:7mm;height:7mm}
+  #problema,#diagnostico,#pecas,#testes,#recomendacoes{min-height:7mm!important;height:7mm!important}
+  #servicos{min-height:20mm!important;height:20mm!important}
+  .status{gap:3mm;flex-wrap:wrap}
+  .status label{font-size:6pt;gap:1mm}
+  .status input{width:auto;min-height:0;height:auto}
+  .sighead{display:flex;justify-content:space-between;align-items:center;gap:2mm;
+      min-height:0;margin:1mm 0 .5mm;font-size:6pt}
+  .print-signatures{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:2mm!important}
+  .print-signatures .signature,.signature{display:block;width:100%;height:16mm!important;
+      border:1px solid #777;border-radius:3mm;background:#fff;touch-action:auto}
+  .print-signature-copy{display:none!important}
+}
+</style>
+</head>
+<body>
+<div class="app">
+<header class="top">
+ <div class="company-header">
+  <img class="company-logo" src="cardioequipo-logo.jpg" alt="Logo Cardioequipo">
+  <div class="brand">ORDEM DE SERVIÇO<small>CARDIOEQUIPO ELETROMEDICINA COMERCIAL LTDA<br>Rua Dona Veridiana, Nº 107, Sala 111 - Santa Cecília - SP<br>Fone: (11) 2609-7848 • CNPJ: 47.577.523/0001-69</small></div>
+ </div>
+ <div><div class="sub">Relatório de atendimento técnico</div></div>
+</header>
+
+<section class="card no-print">
+ <h2>↳ Importar ordem do Bling</h2>
+ <div class="note">Selecione o PDF baixado da Ordem de Serviço do Bling. Os dados serão importados automaticamente para os campos correspondentes.</div>
+ <textarea id="blingText" style="display:none" aria-hidden="true"></textarea>
+ <div class="field" style="margin-top:10px"><label for="blingFile">Importar arquivo da ordem de serviço (PDF ou TXT)</label><input id="blingFile" type="file" accept=".pdf,.txt,application/pdf,text/plain" onchange="readBlingFile(event)"><div class="muted" id="fileStatus" aria-live="polite">Selecione o PDF baixado do Bling ou um arquivo TXT.</div></div>
+ <div class="actions"><button class="outline" type="button" onclick="importBling()">Importar dados preenchidos</button></div>
+ <div class="muted help" style="margin-top:8px">A importação é assistida: confira todos os campos após importar. O layout do Bling pode variar.</div>
+</section>
+
+<section class="card">
+ <h2>1. Dados da ordem de serviço</h2>
+ <div class="grid three">
+  <div class="field"><label>Número da OS</label><input id="os" placeholder="Ex.: 1838"></div>
+  <div class="field"><label>Data de entrada</label><input id="dataEntrada" type="date"></div>
+  <div class="field"><label>Data do atendimento</label><input id="dataAtend" type="date"></div>
+  <div class="field"><label>Hora de início</label><input id="horaInicio" type="time"></div>
+  <div class="field"><label>Hora de término</label><input id="horaFim" type="time"></div>
+  <div class="field"><label>Data de conclusão</label><input id="dataConclusao" type="date"></div>
+ </div>
+ <div class="grid" style="margin-top:12px">
+  <div class="field"><label>Cliente / Hospital</label><input id="cliente" placeholder="Razão social"></div>
+  <div class="field"><label>CNPJ / CPF</label><input id="clienteCnpj" placeholder="00.000.000/0000-00"></div>
+  <div class="field wide"><label for="clienteEndereco">Endereço</label><input id="clienteEndereco" placeholder="Rua, avenida, número e complemento"></div>
+  <div class="field"><label>Bairro</label><input id="clienteBairro" placeholder="Bairro"></div>
+  <div class="field"><label>CEP</label><input id="clienteCep" placeholder="00000-000"></div>
+  <div class="field"><label>Cidade</label><input id="clienteCidade" placeholder="Cidade"></div>
+  <div class="field"><label>Telefone</label><input id="clienteTelefone" placeholder="(00) 00000-0000"></div>
+ </div>
+</section>
+
+<section class="card">
+ <h2>2. Identificação do equipamento</h2>
+ <div class="grid">
+  <div class="field"><label>Equipamento</label><input id="equipamento" placeholder="Ex.: Eletrocardiógrafo"></div>
+  <div class="field"><label>Modelo</label><input id="modelo"></div>
+  <div class="field"><label>Número de série</label><input id="serie"></div>
+  <div class="field"><label>Patrimônio / identificação interna</label><input id="patrimonio"></div>
+  <div class="field wide"><label>Problema relatado</label><textarea id="problema" placeholder="Conforme informado pelo cliente..."></textarea></div>
+ </div>
+</section>
+
+<section class="card">
+ <h2>3. Atendimento técnico</h2>
+ <div class="grid">
+  <div class="field wide"><label>Diagnóstico técnico</label><textarea id="diagnostico" placeholder="Descreva a avaliação e a causa identificada..."></textarea></div>
+  <div class="field wide"><label>Serviços executados / observações do serviço</label><textarea id="servicos" style="min-height:120px" placeholder="Descreva detalhadamente o serviço realizado..."></textarea></div>
+  <div class="field"><label>Peças / materiais utilizados</label><textarea id="pecas" placeholder="Peças substituídas, códigos e quantidades. Se não houver, informe 'Não se aplica'."></textarea></div>
+  <div class="field"><label>Testes e resultados</label><textarea id="testes" placeholder="Testes funcionais, verificações e resultados obtidos..."></textarea></div>
+  <div class="field wide"><label>Recomendações / pendências</label><textarea id="recomendacoes" placeholder="Orientações ao cliente ou ações pendentes..."></textarea></div>
+ </div>
+ <div class="field" style="margin-top:12px"><label>Situação final do equipamento</label>
+  <div class="status">
+   <label><input type="radio" name="status" value="Operacional / Liberado" checked> Operacional / Liberado</label>
+   <label><input type="radio" name="status" value="Pendente / Retido"> Pendente / Retido</label>
+   <label><input type="radio" name="status" value="Aguardando peça"> Aguardando peça</label>
+  </div>
+ </div>
+</section>
+
+<section class="card">
+ <h2>4. Responsáveis e assinaturas</h2>
+ <div class="grid">
+  <div class="field"><label>Nome do técnico</label><input id="tecnico" placeholder="Nome completo"></div>
+  <div class="field"><label>Nome do responsável pelo cliente</label><input id="responsavel" placeholder="Nome completo"></div>
+ </div>
+ <div class="grid print-signatures">
+  <div class="field">
+   <div class="sighead"><b><span id="nomeTecnicoAssinatura">Técnico responsável</span> - assinatura</b><button class="outline no-print sig-clear" onclick="clearSig('sigTecnico')" aria-label="Limpar assinatura do técnico" title="Limpar assinatura">×</button></div>
+   <canvas id="sigTecnico" class="signature" aria-label="Área para assinatura do técnico"></canvas>
+   <div class="muted print-signature-copy">Assine com o dedo, caneta digital ou mouse.</div>
+  </div>
+  <div class="field">
+   <div class="sighead"><b><span id="nomeResponsavelAssinatura">Responsável pelo cliente</span> - assinatura</b><button class="outline no-print sig-clear" onclick="clearSig('sigCliente')" aria-label="Limpar assinatura do cliente" title="Limpar assinatura">×</button></div>
+   <canvas id="sigCliente" class="signature" aria-label="Área para assinatura do cliente"></canvas>
+   <div class="muted print-signature-copy">Assine com o dedo, caneta digital ou mouse.</div>
+  </div>
+ </div>
+ <div class="muted print-signature-copy">A assinatura é incorporada ao documento impresso. Confirme a identidade e a autorização do signatário conforme o procedimento da empresa.</div>
+</section>
+
+<section class="card no-print">
+ <h2>5. Finalizar e encaminhar</h2>
+ <div class="note">O botão do WhatsApp tenta enviar o PDF pelo compartilhamento do aparelho. O PDF também é salvo na pasta de Downloads, sincronizada pelo OneDrive. No computador, escolha “Salvar como PDF” se for solicitado.</div>
+ <div class="actions">
+  <button class="green" onclick="sendWhatsAppPdf()">Enviar OS por WhatsApp em PDF</button>
+  <button class="primary" onclick="savePdfOneDrive()">Salvar PDF no OneDrive</button>
+  <button onclick="savePdfAndPrint()">Salvar PDF / Imprimir</button>
+  <button class="outline" onclick="finishAndPrint()">Finalizar OS / Gerar PDF</button>
+  <button class="outline" onclick="clearForm()">Nova OS</button>
+  <button id="installAppButton" class="outline" type="button" onclick="installApp()" hidden>Instalar aplicativo</button>
+ </div>
+ <div id="toast" class="toast" role="status"></div>
+</section>
+
+<section class="card no-print">
+ <h2>6. Histórico neste aparelho</h2>
+ <div class="note">Atendimentos arquivados ficam neste navegador. Exporte o backup JSON periodicamente para guardar uma cópia.</div>
+ <div id="historyList" style="margin-top:12px"></div>
+ <div class="actions">
+  <button class="outline" onclick="renderHistory()">Atualizar histórico</button>
+  <button class="outline" onclick="exportBackup()">Exportar backup JSON</button>
+  <button class="outline" onclick="importBackup()">Restaurar backup JSON</button>
+ </div>
+ <input id="backupFile" type="file" accept=".json,application/json" hidden onchange="readBackup(event)">
+</section>
+<article id="printTemplate" class="printTemplate">
+ <div class="printTitle">
+  <div><img class="company-logo-small" src="cardioequipo-logo.jpg" alt="Logo Cardioequipo"><div>CARDIOEQUIPO ELETROMEDICINA COMERCIAL LTDA</div><div>Rua Dona Veridiana, Nº 107, Sala 111 - Santa Cecília</div><div>Fone: (11) 2609-7848 • CNPJ: 47.577.523/0001-69</div></div>
+  <div><strong>ORDEM DE SERVIÇO</strong><br>Nº <span data-print="os"></span></div>
+ </div>
+ <table>
+  <tr>
+   <th>Cliente / Hospital</th><td colspan="3"><span data-print="cliente"></span></td>
+   <th>Número da OS</th><td><span data-print="os"></span></td>
+  </tr>
+  <tr>
+   <th>CNPJ / CPF</th><td><span data-print="clienteCnpj"></span></td>
+   <th>Telefone</th><td><span data-print="clienteTelefone"></span></td>
+   <th>CEP</th><td><span data-print="clienteCep"></span></td>
+  </tr>
+  <tr>
+   <th>Endereço</th><td colspan="3"><span data-print="clienteEndereco"></span></td>
+   <th>Bairro</th><td><span data-print="clienteBairro"></span></td>
+  </tr>
+  <tr>
+   <th>Cidade</th><td colspan="5"><span data-print="clienteCidade"></span></td>
+  </tr>
+  <tr>
+   <th>Data de entrada</th><td><span data-print="dataEntrada"></span></td>
+   <th>Data do atendimento</th><td><span data-print="dataAtend"></span></td>
+   <th>Hora</th><td><span data-print="hora"></span></td>
+  </tr>
+  <tr>
+   <th>Equipamento</th><td><span data-print="equipamento"></span></td>
+   <th>Modelo</th><td><span data-print="modelo"></span></td>
+   <th>Número de série</th><td><span data-print="serie"></span></td>
+  </tr>
+  <tr><th>Patrimônio</th><td colspan="5"><span data-print="patrimonio"></span></td></tr>
+  <tr><th>Problema relatado</th><td colspan="5" class="serviceBox"><span data-print="problema"></span></td></tr>
+  <tr><th>Diagnóstico técnico</th><td colspan="5" class="serviceBox"><span data-print="diagnostico"></span></td></tr>
+  <tr><th>Serviços executados</th><td colspan="5" class="serviceBox"><span data-print="servicos"></span></td></tr>
+  <tr><th>Peças / materiais</th><td colspan="5"><span data-print="pecas"></span></td></tr>
+  <tr><th>Testes e resultados</th><td colspan="5"><span data-print="testes"></span></td></tr>
+  <tr><th>Recomendações / pendências</th><td colspan="5"><span data-print="recomendacoes"></span></td></tr>
+  <tr><th>Situação final</th><td colspan="5"><span data-print="status"></span></td></tr>
+ </table>
+ <table>
+  <tr><th>Técnico</th><td><span data-print="tecnico"></span></td><th>Responsável</th><td><span data-print="responsavel"></span></td></tr>
+  <tr><td colspan="2"><img class="sigBox" data-signature="sigTecnico" alt=""><div style="text-align:center">Assinatura do técnico</div></td><td colspan="2"><img class="sigBox" data-signature="sigCliente" alt=""><div style="text-align:center">Assinatura do cliente</div></td></tr>
+ </table>
+</article>
+<div class="footer">Cardioequipo OS Digital 4.0 • Documento de atendimento técnico • Confira os dados antes de assinar e compartilhar.</div>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+<script>
+let deferredInstallPrompt=null;
+window.addEventListener('beforeinstallprompt',event=>{
+ event.preventDefault();
+ deferredInstallPrompt=event;
+ document.getElementById('installAppButton').hidden=false;
+});
+async function installApp(){
+ if(!deferredInstallPrompt){toast('Abra o menu do navegador e escolha Instalar aplicativo ou Adicionar à tela inicial.');return}
+ deferredInstallPrompt.prompt();
+ await deferredInstallPrompt.userChoice;
+ deferredInstallPrompt=null;
+ document.getElementById('installAppButton').hidden=true;
+}
+window.addEventListener('appinstalled',()=>{
+ deferredInstallPrompt=null;
+ document.getElementById('installAppButton').hidden=true;
+ toast('Aplicativo instalado com sucesso.');
+});
+if('serviceWorker' in navigator){window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}))}
+if(window.pdfjsLib){pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js'}
+const ids=['os','dataEntrada','dataAtend','horaInicio','horaFim','dataConclusao','cliente','clienteCnpj','clienteEndereco','clienteBairro','clienteCep','clienteCidade','clienteTelefone','equipamento','modelo','serie','patrimonio','problema','diagnostico','servicos','pecas','testes','recomendacoes','tecnico','responsavel'];
+function val(id){return document.getElementById(id).value.trim()}
+function set(id,v){if(v!==undefined && v!==null && String(v).trim())document.getElementById(id).value=String(v).trim()}
+function toast(s){const t=document.getElementById('toast');t.textContent=s;t.style.display='block';setTimeout(()=>t.style.display='none',4000)}
+function normalize(s){return s.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase()}
+function syncPrintTemplate(){
+ const values={};
+ ids.forEach(id=>values[id]=val(id));
+ values.status=document.querySelector('input[name=status]:checked')?.value||'';
+ values.hora=[val('horaInicio'),val('horaFim')].filter(Boolean).join(' às ');
+ document.querySelectorAll('[data-print]').forEach(el=>{
+  const id=el.dataset.print;
+  el.textContent=values[id]||'';
+  el.style.whiteSpace='pre-wrap';
+ });
+ Object.keys(sigs||{}).forEach(id=>{
+  const img=document.querySelector(`[data-signature="${id}"]`);
+  if(img)img.src=sigs[id].data()||'';
+ });
+}
+function findValue(text,labels){
+ const lines=text.split(/\r?\n/).map(x=>x.trim()).filter(Boolean);
+ for(let i=0;i<lines.length;i++){
+  const n=normalize(lines[i]);
+  for(const label of labels){const l=normalize(label);
+   if(n===l || n.startsWith(l+':')){let v=lines[i].slice(lines[i].indexOf(':')+1).trim();if(!v && lines[i+1])v=lines[i+1].trim();if(v)return v;}
+   if(n.startsWith(l+' ')){const v=lines[i].slice(label.length).replace(/^[:\s-]+/,'').trim();if(v)return v;}
+  }
+ }
+ return '';
+}
+function dateForInput(v){
+ const m=String(v||'').match(/(\d{1,2})[\/.-](\d{1,2})[\/.-](\d{4})/);
+ return m?`${m[3]}-${m[2].padStart(2,'0')}-${m[1].padStart(2,'0')}`:'';
+}
+async function pasteBling(){
+ try{if(!navigator.clipboard?.readText)throw new Error('clipboard indisponível');document.getElementById('blingText').value=await navigator.clipboard.readText();toast('Texto colado. Toque em Importar dados.')}
+ catch(e){toast('Não foi possível acessar a área de transferência. Cole o texto manualmente no campo.')}
+}
+async function readBlingFile(e){
+ const f=e.target.files[0];if(!f)return;
+ const status=document.getElementById('fileStatus');
+ status.textContent='Lendo arquivo...';
+ try{
+  if(f.type==='application/pdf'||f.name.toLowerCase().endsWith('.pdf')){
+   if(!window.pdfjsLib)throw new Error('O leitor de PDF não carregou. Verifique a conexão com a internet e atualize a página.');
+   const bytes=await f.arrayBuffer();
+   const pdf=await pdfjsLib.getDocument({data:bytes}).promise;
+   let pages=[];
+   for(let n=1;n<=pdf.numPages;n++){
+    const page=await pdf.getPage(n);
+    const content=await page.getTextContent();
+    // Preserve visual line grouping as far as possible from PDF text coordinates.
+    const items=content.items.filter(x=>x.str&&x.str.trim());
+    const lines=[];
+    for(const item of items){
+     const y=Math.round(item.transform[5]);
+     let line=lines.find(l=>Math.abs(l.y-y)<=3);
+     if(!line){line={y,parts:[]};lines.push(line)}
+     line.parts.push({x:item.transform[4],text:item.str});
+    }
+    lines.sort((a,b)=>b.y-a.y);
+    pages.push(lines.map(l=>l.parts.sort((a,b)=>a.x-b.x).map(p=>p.text).join('  ')).join('\n'));
+   }
+   document.getElementById('blingText').value=pages.join('\n\n');
+   status.textContent=`PDF lido com sucesso (${pdf.numPages} página(s)). Dados importados automaticamente.`;
+   toast('PDF importado. Confira os campos preenchidos.');
+   setTimeout(importarDadosAutomaticamente, 0);
+  }else{
+   const text=await f.text();
+   document.getElementById('blingText').value=text;
+   status.textContent='Arquivo TXT carregado. Dados importados automaticamente.';
+   toast('Arquivo TXT importado. Confira os campos preenchidos.');
+   setTimeout(importarDadosAutomaticamente, 0);
+  }
+ }catch(err){status.textContent=err.message||'Não foi possível ler o arquivo.';toast(status.textContent)}
+ finally{e.target.value=''}
+}
+function importBling(){
+ importarDadosAutomaticamente();
+}
+function importarDadosAutomaticamente(){
+ const t=document.getElementById('blingText').value.trim();
+ if(!t){toast('Cole o texto copiado ou selecione o PDF da OS.');return}
+ if(/^https?:\/\/\S+$/i.test(t)){
+  carregarLinkBling(t);
+  return;
+ }
+ const lines=t.split(/\r?\n/).map(x=>x.replace(/\s+/g,' ').trim()).filter(Boolean);
+ const lineAfter=(label)=>{
+  const re=new RegExp(normalize(label).replace(/[.*+?^${}()|[\]\\]/g,'\\$&'),'i');
+  const i=lines.findIndex(x=>normalize(x)===normalize(label)||normalize(x).startsWith(normalize(label)+' ')||normalize(x).includes(normalize(label)));
+  return i>=0?lines[i+1]||'':'';
+ };
+ const cleanLabelValue=(v)=>{
+  return String(v||'').replace(/^\s*(?:n[º°o.]?\/?s?|cnpj|cpf)?\s*[:=-]\s*/i,'').trim();
+ };
+ let count=0;
+ const ordem=t.match(/Ordem\s+de\s+servi[cç]o\s*(?:n[º°o.]?\s*)?[:#-]?\s*(\d{2,})/i);
+ if(ordem){set('os',ordem[1]);count++}
+ const entrada=t.match(/(?:29|30|31)?(\d{1,2}[\/.-]\d{1,2}[\/.-]\d{4})\s+\d{1,2}:\d{2}:\d{2}\s+Data\s+prevista/i);
+ const dates=[...t.matchAll(/(\d{1,2}[\/.-]\d{1,2}[\/.-]\d{4})/g)].map(m=>m[1]);
+ if(dates.length){set('dataEntrada',dateForInput(dates[0]));set('dataAtend',dateForInput(dates[0]));count++}
+ const horas=[...t.matchAll(/\b(\d{1,2}:\d{2}(?::\d{2})?)\b/g)].map(m=>m[1]);
+ const horaInicio=t.match(/(?:Hora\s*(?:de\s*)?In[íi]cio|In[íi]cio)\s*(?:\d{2,}|\d{1,2}[\/.-]\d{1,2}[\/.-]\d{4})?\s*(\d{1,2}:\d{2}(?::\d{2})?)/i);
+ const horaFim=t.match(/Hora\s+(?:de\s+)?T[ée]rmino\s*(\d{1,2}:\d{2}(?::\d{2})?)/i);
+ if(horaInicio){set('horaInicio',horaInicio[1].slice(0,5));count++}
+ if(horaFim){set('horaFim',horaFim[1].slice(0,5));count++}
+ if(!horaInicio && horas[0]){set('horaInicio',horas[0].slice(0,5));count++}
+ if(!horaFim && horas[1]){set('horaFim',horas[1].slice(0,5));count++}
+ const conclusao=t.match(/Data\s+de\s+conclus[aã]o[^\d]*(\d{1,2}[\/.-]\d{1,2}[\/.-]\d{4})/i);
+ if(conclusao){set('dataConclusao',dateForInput(conclusao[1]));count++}
+ const clienteLine=lines.find(x=>/^\s*Cliente\s*$/i.test(x));
+ let cliente='';
+ if(clienteLine!==undefined){
+  cliente=(lines[lines.indexOf(clienteLine)+1]||'').split(/\s{2,}|\s+(?=Número(?:\s|$))/i)[0];
+  cliente=cliente.replace(/\b\d{11,14}\b.*$/,'').trim();
+ }
+ if(cliente && !/^(cliente|equipamento)/i.test(cliente)){set('cliente',cliente);count++}
+ const clienteIndex=t.search(/Cliente\s*\r?\n/i);
+ const dadosCliente=t.slice(clienteIndex>=0?clienteIndex:0,t.indexOf('\nEquipamento',clienteIndex));
+ const cnpjCliente=dadosCliente.match(/\b(\d{2}[.\s]?\d{3}[.\s]?\d{3}[/\s]?\d{4}[-.\s]?\d{2})\b/)||
+                    dadosCliente.match(/\b(\d{11,14})\b/);
+ if(cnpjCliente){
+  const digits=cnpjCliente[1].replace(/\D/g,'');
+  const cnpjValue=digits.length===14?digits.replace(/(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})/,'$1.$2.$3/$4-$5'):digits;
+  if(digits.length===11||digits.length===14){set('clienteCnpj',cnpjValue);count++}
+ }
+ const endereco=dadosCliente.match(/(?:^|\n)(.*?(?:Rua|R\.|Av(?:enida)?\.?|Rod(?:ovia)?\.?|Alameda|Praça)[^\n]*)/im);
+ if(endereco){set('clienteEndereco',endereco[1].trim());count++}
+ else{
+   const clienteLines=dadosCliente.split(/\r?\n/).map(x=>x.trim()).filter(Boolean);
+   const bairroIndex=clienteLines.findIndex(x=>/^Bairro\s*:/i.test(x));
+   if(bairroIndex>0){
+    const enderecoAnterior=clienteLines[bairroIndex-1]?.trim();
+    if(enderecoAnterior && !/^(Cliente|N[úu]mero|Data|Hora|\d{11,14})\b/i.test(enderecoAnterior)){
+     set('clienteEndereco',enderecoAnterior.replace(/^R\s+(?=[A-Za-z])/i,'Rua ').trim());count++;
+    }
+   }
+ }
+ const bairro=dadosCliente.match(/Bairro:\s*([^\n]+)/i);
+ if(bairro){set('clienteBairro',bairro[1].trim());count++}
+ const cepCidade=dadosCliente.match(/\n(\d{5}-?\d{3})\s*-\s*([^,\n]+),\s*([A-Z]{2})/i);
+ if(cepCidade){const cep=cepCidade[1].replace(/\D/g,'');set('clienteCep',cep.length===8?cep.replace(/(\d{5})(\d{3})/,'$1-$2'):cep);set('clienteCidade',cepCidade[2].trim()+' - '+cepCidade[3].trim());count+=2}
+ const telefone=dadosCliente.match(/Fone:\s*(\(?\d{2}\)?[\s.-]*\d{4,5}[\s.-]*\d{4})/i);
+ if(telefone){set('clienteTelefone',telefone[1].trim());count++}
+ const equipamentoLinha=lines.find(x=>/\bN[º°\/]S\s*=/.test(x)||/\bS[=/]\s*[A-Z0-9]/i.test(x));
+ const equipamentoTexto=equipamentoLinha||lineAfter('Equipamento(s)');
+ if(equipamentoTexto){
+  let equipamento=(equipamentoTexto.match(/^(.+?)\s+(?:N[º°]\/S\s*[=:]?\s*)/i)?.[1]||equipamentoTexto).trim();
+  const equipamentoPadrao=equipamento.match(/^(Eletrocardi[oó]grafo|Desfibrilador|Monitor Multipar[aâ]m[eé]trico|Ultrassom|Eletroencefal[oó]grafo)\b/i);
+  if(equipamentoPadrao){
+   const modelRemainder=equipamento.slice(equipamentoPadrao[0].length).trim();
+   equipamento=equipamentoPadrao[0];
+   if(modelRemainder){set('modelo',modelRemainder);count++}
+  }
+  equipamento=equipamento.replace(/\s+(?:n[º°\/]s).*/i,'').trim();
+  if(equipamento && !/número/i.test(equipamento)){set('equipamento',equipamento);count++}
+  const serieMatch=equipamentoTexto.match(/(?:n[º°\/]s|s[=\/])\s*[=:]?\s*([A-Z0-9][A-Z0-9 ._-]*)/i);
+  if(serieMatch){set('serie',serieMatch[1].trim());count++}
+ }
+ const modeloMatch=(equipamentoLinha||'').match(/\b([A-Za-z]+(?:\s+[A-Za-z0-9.-]+)?)\s+(?:N[º°\/]S\s*[=:]?\s*)/i);
+ if(modeloMatch && !/^Eletrocardiógrafo/i.test(modeloMatch[1]))set('modelo',modeloMatch[1].trim());
+ const secao=(titulo,proximo)=>{
+  const i=lines.findIndex(x=>normalize(x)===' '+normalize(titulo)||normalize(x)===normalize(titulo)||normalize(x).startsWith(normalize(titulo)+' '));
+  if(i<0)return '';
+  for(let j=i+1;j<lines.length;j++){
+   if(new RegExp('^'+normalize(proximo),'i').test(normalize(lines[j])))break;
+   if(lines[j] && !/^Data\b/i.test(lines[j]))return lines[j].replace(/^\s*[-:]\s*/,'').trim();
+  }
+  return '';
+ };
+ const problema=secao('Problema Relatado','Observações internas');
+ if(problema){set('problema',problema);count++}
+ const tecnico=t.match(/T[ée]cnico(?:\(s\))?\s*:\s*([^\r\n]+)/i);
+ if(tecnico){set('tecnico',tecnico[1].trim());count++}
+ toast(count?`${count} campo(s) identificado(s). Confira e complete os dados antes de continuar.`:'Não identifiquei os campos com segurança. Preencha manualmente para evitar importar informações erradas.');
+}
+
+async function carregarLinkBling(url){
+ const status=document.getElementById('fileStatus');
+ if(!/^https?:\/\/[^\s]+\.pdf(?:\?|$)/i.test(url)){
+  status.textContent='Este link abre uma página protegida ou HTML. Baixe/imprima a OS como PDF e selecione o arquivo abaixo.';
+  toast('Link recebido, mas o navegador não consegue acessar dados da OS logada. Use o PDF baixado.');
+  return;
+ }
+ status.textContent='Tentando carregar o PDF pelo link...';
+ try{
+  const resposta=await fetch(url,{mode:'cors'});
+  if(!resposta.ok)throw new Error(`HTTP ${resposta.status}`);
+  const tipo=resposta.headers.get('content-type')||'';
+  if(!tipo.includes('pdf') && !/\.pdf(?:\?|$)/i.test(url))throw new Error('O endereço não devolveu um PDF.');
+  const bytes=await resposta.arrayBuffer();
+  const arquivo=new File([bytes],'bling_ordem_servico.pdf',{type:'application/pdf'});
+  await readBlingFile({target:{files:[arquivo]}});
+ }catch(erro){
+  status.textContent='O link não pode ser aberto pelo navegador. Baixe o PDF do Bling e selecione o arquivo abaixo.';
+  toast('Acesso ao link bloqueado por autenticação ou segurança do navegador.');
+ }
+}
+function setupCanvas(id){
+ const c=document.getElementById(id),ctx=c.getContext('2d');let drawing=false,hasInk=false;
+ function resize(){const dpr=Math.max(1,window.devicePixelRatio||1);const old=hasInk?c.toDataURL():null;const w=c.clientWidth,h=160;c.width=w*dpr;c.height=h*dpr;ctx.setTransform(dpr,0,0,dpr,0,0);ctx.lineWidth=2.2;ctx.lineCap='round';ctx.lineJoin='round';ctx.strokeStyle='#142b43';if(old){const im=new Image();im.onload=()=>ctx.drawImage(im,0,0,w,h);im.src=old}}
+ function point(e){const r=c.getBoundingClientRect();return{x:e.clientX-r.left,y:e.clientY-r.top}}
+ c.addEventListener('pointerdown',e=>{e.preventDefault();drawing=true;hasInk=true;c.setPointerCapture(e.pointerId);const p=point(e);ctx.beginPath();ctx.moveTo(p.x,p.y)});
+ c.addEventListener('pointermove',e=>{if(!drawing)return;e.preventDefault();const p=point(e);ctx.lineTo(p.x,p.y);ctx.stroke()});
+ ['pointerup','pointercancel','lostpointercapture'].forEach(ev=>c.addEventListener(ev,()=>drawing=false));
+ window.addEventListener('resize',resize);resize();
+ return {clear(){ctx.save();ctx.setTransform(1,0,0,1,0,0);ctx.clearRect(0,0,c.width,c.height);ctx.restore();hasInk=false},mark(){hasInk=true},data(){return hasInk?c.toDataURL('image/png'):''}};
+}
+const sigs={sigCliente:setupCanvas('sigCliente'),sigTecnico:setupCanvas('sigTecnico')};
+function atualizarNomesDasAssinaturas(){
+ document.getElementById('nomeResponsavelAssinatura').textContent=val('responsavel')||'Responsável pelo cliente';
+ document.getElementById('nomeTecnicoAssinatura').textContent=val('tecnico')||'Técnico responsável';
+}
+document.getElementById('responsavel').addEventListener('input',atualizarNomesDasAssinaturas);
+document.getElementById('tecnico').addEventListener('input',atualizarNomesDasAssinaturas);
+function clearSig(id){sigs[id].clear()}
+function collectData(){
+ const data={};ids.forEach(id=>data[id]=val(id));data.status=document.querySelector('input[name=status]:checked').value;
+ Object.keys(sigs).forEach(id=>data[id]=sigs[id].data());return data;
+}
+function applyData(d){
+ ids.forEach(id=>set(id,d[id]));
+ const statusEsperado=d.status||'Operacional / Liberado';
+ [...document.querySelectorAll('input[name=status]')].forEach(radio=>{radio.checked=radio.value===statusEsperado});
+ Object.keys(sigs).forEach(id=>{clearSig(id);if(d[id]){const c=document.getElementById(id),ctx=c.getContext('2d'),im=new Image();im.onload=()=>{ctx.drawImage(im,0,0,c.clientWidth,160);sigs[id].mark()};im.src=d[id]}});
+}
+function saveDraft(){
+ try{localStorage.setItem('cardioequipo_os_draft',JSON.stringify(collectData()));toast('Rascunho salvo neste aparelho.');}
+ catch(e){toast('Não foi possível salvar. O armazenamento do navegador pode estar cheio.')}
+}
+function loadDraft(){
+ try{const d=JSON.parse(localStorage.getItem('cardioequipo_os_draft')||'null');if(!d){toast('Nenhum rascunho encontrado neste aparelho.');return}applyData(d);toast('Rascunho recuperado. Confira os dados.');}
+ catch(e){toast('Erro ao recuperar o rascunho.')}
+}
+function getHistory(){try{return JSON.parse(localStorage.getItem('cardioequipo_os_history')||'[]')}catch(e){return []}}
+function saveHistory(list){localStorage.setItem('cardioequipo_os_history',JSON.stringify(list))}
+function saveToHistory(){
+ const d=collectData();if(!d.os){toast('Informe o número da OS antes de arquivar.');return false}
+ const list=getHistory();const key=String(d.os).trim();
+ const item={...d, savedAt:new Date().toISOString()};
+ const index=list.findIndex(x=>String(x.os)===key);
+ if(index>=0){if(!confirm('Já existe uma OS com esse número no histórico. Deseja atualizar o registro salvo?'))return false;list[index]=item}
+ else list.unshift(item);
+ try{saveHistory(list.slice(0,200));renderHistory();return true}catch(e){toast('Não foi possível arquivar. Exporte os registros antigos para liberar espaço.');return false}
+}
+function renderHistory(){
+ const el=document.getElementById('historyList');
+ if(!el)return;
+ const list=getHistory();
+ if(!list.length){el.textContent='Nenhum atendimento arquivado.';return}
+ el.innerHTML='';
+ list.slice(0,30).forEach(item=>{
+  const row=document.createElement('div');row.className='history-row';
+  const info=document.createElement('div');info.textContent=`OS ${item.os||'—'} • ${item.cliente||'Cliente não informado'} • ${item.savedAt?new Date(item.savedAt).toLocaleString('pt-BR'):''}`;
+  const btn=document.createElement('button');btn.textContent='Alterar OS';btn.onclick=()=>{
+   applyData(item);
+   window.scrollTo({top:0,behavior:'smooth'});
+   toast('OS carregada. Após editar, clique em Finalizar OS / Gerar PDF para atualizar o histórico.');
+  };
+  row.append(info,btn);el.append(row);
+ });
+}
+function finishAndPrint(){
+ const missing=[];if(!val('os'))missing.push('número da OS');if(!val('cliente'))missing.push('cliente');if(!val('equipamento'))missing.push('equipamento');if(!val('tecnico'))missing.push('nome do técnico');if(!val('servicos'))missing.push('serviços executados');
+ if(missing.length){toast('Antes de finalizar, preencha: '+missing.join(', ')+'.');return}
+ if(!sigs.sigCliente.data()){toast('Solicite a assinatura do responsável pelo cliente antes de finalizar.');return}
+ if(!saveToHistory())return;
+ window.print();
+}
+function validateForPdf(){
+ if(!window.jspdf?.jsPDF){toast('O gerador de PDF não carregou. Verifique sua conexão e atualize a página.');return false}
+ const required=[['os','número da OS'],['cliente','cliente'],['equipamento','equipamento'],['tecnico','nome do técnico'],['servicos','serviços executados']];
+ const missing=required.filter(([id])=>!val(id)).map(([,label])=>label);
+ if(missing.length){toast('Antes de finalizar, preencha: '+missing.join(', ')+'.');return false}
+ if(!sigs.sigCliente.data()){toast('Solicite a assinatura do responsável pelo cliente antes de finalizar.');return false}
+ return true;
+}
+function safeFileName(value){
+ return String(value||'OS').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-zA-Z0-9]+/g,'_').replace(/^_|_$/g,'');
+}
+function logoDataUrl(){
+ try{
+  const logo=document.querySelector('.company-logo');
+  if(!logo || !logo.complete || !logo.naturalWidth)return '';
+  if(cachedLogoDataUrl)return cachedLogoDataUrl;
+  const canvas=document.createElement('canvas');
+  canvas.width=logo.naturalWidth;
+  canvas.height=logo.naturalHeight;
+  canvas.getContext('2d').drawImage(logo,0,0);
+  cachedLogoDataUrl=canvas.toDataURL('image/jpeg',0.92);
+  return cachedLogoDataUrl;
+ }catch(e){return ''}
+}
+let cachedLogoDataUrl='';
+function cacheLogoDataUrl(){
+ cachedLogoDataUrl=logoDataUrl();
+}
+window.addEventListener('load',cacheLogoDataUrl);
+function createOsPdf(){
+ if(!window.jspdf?.jsPDF){toast('O gerador de PDF não carregou. Verifique sua conexão e atualize a página.');throw new Error('jsPDF indisponível')}
+ const {jsPDF}=window.jspdf;
+ const pdf=new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
+ const left=12,right=198,blue=[24,96,145];
+ let y=7;
+ const logo=logoDataUrl();
+ if(logo){pdf.addImage(logo,'JPEG',left,y+1,48,15)}else{pdf.setFont('helvetica','bold');pdf.setFontSize(13);pdf.setTextColor(...blue);pdf.text('CARDIOEQUIPO',left,y+9)}
+ pdf.setFont('helvetica','bold');pdf.setFontSize(10);pdf.setTextColor(...blue);
+ pdf.text('ORDEM DE SERVICO',right,y+3,{align:'right'});
+ pdf.setFont('helvetica','normal');pdf.setFontSize(6);pdf.setTextColor(55,55,55);
+ pdf.text('MODELO DE ATENDIMENTO TECNICO',right,y+7,{align:'right'});
+ pdf.setFont('helvetica','bold');pdf.setFontSize(6.3);
+ pdf.text('CARDIOEQUIPO ELETROMEDICINA COMERCIAL LTDA',right,y+12,{align:'right'});
+ pdf.setFont('helvetica','normal');
+ pdf.text('Rua Dona Veridiana, N 107, Sala 111 - Santa Cecilia - SP',right,y+16,{align:'right'});
+ pdf.text('Fone: (11) 2609-7848  |  CNPJ: 47.577.523/0001-69',right,y+20,{align:'right'});
+ y=31;
+ pdf.setDrawColor(...blue);pdf.setLineWidth(.7);pdf.line(left,y,right,y);y+=3;
+ const section=title=>{
+  pdf.setFillColor(226,234,241);pdf.setDrawColor(100,100,100);pdf.rect(left,y,right-left,5,'FD');
+  pdf.setFont('helvetica','bold');pdf.setFontSize(7);pdf.setTextColor(...blue);pdf.text(title,left+2,y+3.3);
+  y+=5;
+ };
+ const row=(cells,h=9)=>{
+  let x=left;
+  cells.forEach(c=>{
+   const w=c.w||((right-left)/cells.length);
+   pdf.setDrawColor(105,105,105);pdf.setLineWidth(.12);pdf.rect(x,y,w,h);
+   pdf.setFont('helvetica','bold');pdf.setFontSize(5.5);pdf.setTextColor(...blue);pdf.text(String(c.label||'').toUpperCase(),x+1.5,y+2.7);
+   pdf.setFont('helvetica','normal');pdf.setFontSize(6.2);pdf.setTextColor(25,25,25);
+   const lines=pdf.splitTextToSize(String(c.value||'-'),Math.max(2,w-3),{maxWidth:w-3});
+   pdf.text(lines,x+1.5,y+5.8,{maxWidth:w-3});
+   x+=w;
+  });
+  y+=h;
+ };
+ section('1. Dados da ordem de servico');
+ row([{label:'Numero da OS',w:32,value:val('os')},{label:'Data de entrada',w:36,value:val('dataEntrada')},{label:'Data do atendimento',w:43,value:val('dataAtend')},{label:'Status da OS',w:75,value:'Atendimento tecnico'}],8);
+ row([{label:'Cliente / Hospital',w:118,value:val('cliente')},{label:'CNPJ / CPF',w:68,value:val('clienteCnpj')}],8);
+ row([{label:'Endereco',w:118,value:val('clienteEndereco')},{label:'Bairro',w:68,value:val('clienteBairro')}],8);
+ row([{label:'Cidade',w:118,value:val('clienteCidade')},{label:'CEP',w:31,value:val('clienteCep')},{label:'Telefone',w:37,value:val('clienteTelefone')}],8);
+ section('2. Identificacao do equipamento');
+ row([{label:'Equipamento',w:62,value:val('equipamento')},{label:'Modelo',w:62,value:val('modelo')},{label:'Numero de serie',w:62,value:val('serie')}],8);
+ row([{label:'Patrimonio / identificacao interna',w:186,value:val('patrimonio')}],8);
+ row([{label:'Problema relatado',value:val('problema')}],10);
+ section('3. Atendimento tecnico');
+ row([{label:'Diagnostico tecnico',value:val('diagnostico')}],12);
+ row([{label:'Servicos executados / observacoes',value:val('servicos')}],16);
+ row([{label:'Pecas / materiais utilizados',w:93,value:val('pecas')},{label:'Testes e resultados',w:93,value:val('testes')}],10);
+ row([{label:'Recomendacoes / pendencias',value:val('recomendacoes')}],10);
+ const status=document.querySelector('input[name=status]:checked')?.value||'Operacional / Liberado';
+ row([{label:'Situacao final do equipamento',value:status}],7);
+ section('4. Responsaveis e assinaturas');
+ row([{label:'Nome do tecnico',w:93,value:val('tecnico')},{label:'Responsavel pelo cliente',w:93,value:val('responsavel')}],8);
+ y+=1;
+ const boxW=93,boxH=22;
+ pdf.rect(left,y,boxW,boxH);pdf.rect(105,y,boxW,boxH);
+ const tech=sigs.sigTecnico.data(),client=sigs.sigCliente.data();
+ if(tech)pdf.addImage(tech,'PNG',left+4,y+1.5,boxW-8,15.5);
+ if(client)pdf.addImage(client,'PNG',109,y+1.5,boxW-8,15.5);
+ pdf.setFont('helvetica','normal');pdf.setFontSize(6);pdf.setTextColor(40,40,40);
+ pdf.text('Assinatura do tecnico',left+boxW/2,y+boxH-2,{align:'center'});
+ pdf.text('Assinatura do cliente',105+boxW/2,y+boxH-2,{align:'center'});
+ return pdf;
+}
+function osPdfFileName(){
+ return 'OS_'+safeFileName(val('cliente'))+'_'+safeFileName(val('dataAtend')||val('dataEntrada'))+'.pdf';
+}
+async function sendWhatsAppPdf(){
+ if(!validateForPdf())return;
+ const pdf=createOsPdf(),fileName=osPdfFileName();
+ const blob=pdf.output('blob'),file=new File([blob],fileName,{type:'application/pdf'});
+ if(navigator.canShare && navigator.canShare({files:[file]})){
+  try{await navigator.share({files:[file],title:'Ordem de Servico - '+val('os'),text:'OS '+val('os')+' da Cardioequipo'});return}catch(e){}
+ }
+ pdf.save(fileName);
+ const text=encodeURIComponent('Ordem de Servico OS '+val('os')+' da Cardioequipo concluida. Envie o PDF salvo na pasta de Downloads.');
+ window.open('https://wa.me/?text='+text,'_blank','noopener');
+ toast('PDF salvo em Downloads. Anexe o arquivo na conversa do WhatsApp.');
+}
+function savePdfOneDrive(){
+ if(!validateForPdf())return;
+ const pdf=createOsPdf();pdf.save(osPdfFileName());
+ toast('PDF salvo em Downloads. Se o OneDrive estiver sincronizado, ele sera enviado para a nuvem automaticamente.');
+}
+function savePdfAndPrint(){
+ if(!validateForPdf())return;
+ const pdf=createOsPdf();
+ const blobUrl=URL.createObjectURL(pdf.output('blob'));
+ const win=window.open(blobUrl,'_blank');
+ if(!win){URL.revokeObjectURL(blobUrl);toast('Permita pop-ups para visualizar o PDF antes de imprimir.');return}
+ toast('PDF aberto para visualização. Use os controles do PDF para imprimir ou salvar.');
+ setTimeout(()=>URL.revokeObjectURL(blobUrl),60000);
+}
+function exportBackup(){
+ const payload={app:'Cardioequipo OS Digital',version:3,exportedAt:new Date().toISOString(),history:getHistory(),draft:collectData()};
+ const blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'});
+ const url=URL.createObjectURL(blob);
+ const a=document.createElement('a');
+ a.href=url;a.download='backup_cardioequipo_os.json';
+ document.body.appendChild(a);a.click();a.remove();
+ setTimeout(()=>URL.revokeObjectURL(url),10000);
+ toast('Backup JSON exportado. Guarde em local corporativo autorizado.');
+}
+function importBackup(){document.getElementById('backupFile').click()}
+function readBackup(e){
+ const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{const d=JSON.parse(r.result);if(!Array.isArray(d.history))throw new Error('formato');const old=getHistory(),merged=[...d.history,...old.filter(x=>!d.history.some(y=>String(y.os)===String(x.os)))];saveHistory(merged.slice(0,200));if(d.draft)applyData(d.draft);renderHistory();toast('Backup restaurado. Confira os registros.')}catch(err){toast('Arquivo de backup inválido.')} };r.readAsText(f);e.target.value='';
+}
+function clearForm(){if(!confirm('Tem certeza? Os dados desta tela serão apagados. Salve o rascunho antes, se necessário.'))return;ids.forEach(id=>document.getElementById(id).value='');document.querySelector('input[name=status][value="Operacional / Liberado"]').checked=true;Object.keys(sigs).forEach(clearSig);document.getElementById('blingText').value='';toast('Formulário limpo.')}
+syncPrintTemplate();
+window.addEventListener('beforeprint',syncPrintTemplate);window.addEventListener('DOMContentLoaded',renderHistory);
+</script>
+</body>
+</html>
