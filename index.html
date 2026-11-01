@@ -12,6 +12,7 @@
 <title>Cardioequipo | OS Digital</title>
 <style>
 :root{--blue:#124b82;--blue2:#1769aa;--ink:#1e293b;--muted:#64748b;--line:#d8e1ea;--bg:#eef3f8;--green:#16834a}
+[hidden]{display:none!important}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);font:15px/1.45 system-ui,-apple-system,Segoe UI,sans-serif;color:var(--ink)}
 .app{max-width:980px;margin:auto;padding:18px}.top{display:flex;align-items:center;justify-content:space-between;gap:12px;background:#fff;border-radius:16px;padding:16px 20px;box-shadow:0 5px 20px #163b5c12}
 .brand{font-weight:900;color:var(--blue);font-size:22px;letter-spacing:-.5px}.brand small{display:block;font-size:10px;letter-spacing:1.6px;color:var(--muted)}
@@ -31,6 +32,13 @@ button{border:0;border-radius:10px;padding:12px 16px;font-weight:750;font-size:1
 button:active{transform:translateY(1px)}
 .history-row{display:flex;gap:8px;align-items:center;justify-content:space-between;padding:9px 0;border-bottom:1px solid #e3eaf1;flex-wrap:wrap}
 .history-row:last-child{border-bottom:0}
+.login-screen{position:fixed;inset:0;z-index:1000;display:grid;place-items:center;padding:20px;background:linear-gradient(135deg,#eaf3fb,#f7fafc)}
+.login-box{width:min(420px,100%);background:#fff;border-radius:18px;padding:28px;box-shadow:0 18px 50px #163b5c2b}
+.login-box h1{font-size:24px;text-align:center;margin-bottom:6px;color:var(--blue)}
+.login-box .login-subtitle{text-align:center;color:var(--muted);font-size:13px;margin-bottom:22px}
+.login-box button{width:100%;margin-top:14px}
+.login-error{min-height:20px;color:#b42318;font-size:13px;margin-top:10px;text-align:center}
+.logout-button{display:block;margin-top:8px;padding:7px 10px;font-size:12px;background:#edf3f8}
 .sig-clear{width:34px;height:34px;padding:0!important;border-radius:50%;display:grid;place-items:center;font-size:19px;line-height:1;color:#164c78;flex:none}
 .sighead{min-height:34px}
 .signature{border:1px dashed #9aaabd;border-radius:10px;background:#fbfdff;touch-action:none;width:100%;height:160px;display:block}
@@ -85,13 +93,29 @@ button:active{transform:translateY(1px)}
 </style>
 </head>
 <body>
-<div class="app">
+<main id="loginScreen" class="login-screen" aria-label="Tela de acesso">
+ <form id="loginForm" class="login-box">
+  <h1>Cardioequipo</h1>
+  <div class="login-subtitle">Acesso à Ordem de Serviço Digital</div>
+  <div class="field">
+   <label for="loginUsuario">Usuário</label>
+   <input id="loginUsuario" autocomplete="username" value="Thiago Ferreira" required>
+  </div>
+  <div class="field" style="margin-top:12px">
+   <label for="loginSenha">Senha</label>
+   <input id="loginSenha" type="password" autocomplete="current-password" required>
+  </div>
+  <div id="loginError" class="login-error" role="alert"></div>
+  <button class="primary" type="submit">Entrar</button>
+ </form>
+</main>
+<div class="app" id="appContent" hidden>
 <header class="top">
  <div class="company-header">
   <img class="company-logo" src="cardioequipo-logo.jpg" alt="Logo Cardioequipo">
   <div class="brand">ORDEM DE SERVIÇO<small>CARDIOEQUIPO ELETROMEDICINA COMERCIAL LTDA<br>Rua Dona Veridiana, Nº 107, Sala 111 - Santa Cecília - SP<br>Fone: (11) 2609-7848 • CNPJ: 47.577.523/0001-69</small></div>
  </div>
- <div><div class="sub">Relatório de atendimento técnico</div></div>
+ <div><div class="sub">Relatório de atendimento técnico</div><button class="logout-button" type="button" onclick="logoutApp()">Encerrar sessão</button></div>
 </header>
 
 <section class="card no-print">
@@ -250,6 +274,34 @@ button:active{transform:translateY(1px)}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
 <script>
+const APP_LOGIN_USER='Thiago Ferreira';
+const APP_LOGIN_HASH='0594fbfc656a02ea57bca40bdadba7a7a0ef242a7f57c221c6b3eeaf5e8abb5a';
+async function hashLoginPassword(value){
+ const bytes=new TextEncoder().encode(value);
+ const digest=await crypto.subtle.digest('SHA-256',bytes);
+ return Array.from(new Uint8Array(digest),byte=>byte.toString(16).padStart(2,'0')).join('');
+}
+function unlockApp(){
+ document.getElementById('loginScreen').hidden=true;
+ document.getElementById('appContent').hidden=false;
+}
+document.getElementById('loginForm').addEventListener('submit',async event=>{
+ event.preventDefault();
+ const usuario=document.getElementById('loginUsuario').value.trim();
+ const senha=document.getElementById('loginSenha').value;
+ const error=document.getElementById('loginError');
+ if(usuario.toLowerCase()!==APP_LOGIN_USER.toLowerCase()){error.textContent='Usuário ou senha incorretos.';return}
+ try{
+  if(await hashLoginPassword(senha)!==APP_LOGIN_HASH){error.textContent='Usuário ou senha incorretos.';return}
+  sessionStorage.setItem('cardioequipo_authenticated','true');
+  unlockApp();
+ }catch(e){error.textContent='Não foi possível validar o acesso neste navegador.'}
+});
+function logoutApp(){
+ sessionStorage.removeItem('cardioequipo_authenticated');
+ location.reload();
+}
+if(sessionStorage.getItem('cardioequipo_authenticated')==='true')unlockApp();
 let deferredInstallPrompt=null;
 window.addEventListener('beforeinstallprompt',event=>{
  event.preventDefault();
