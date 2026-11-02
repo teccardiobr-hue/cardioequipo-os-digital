@@ -566,12 +566,36 @@ async function carregarLinkBling(url){
 }
 function setupCanvas(id){
  const c=document.getElementById(id),ctx=c.getContext('2d');let drawing=false,hasInk=false;
- function resize(){const dpr=Math.max(1,window.devicePixelRatio||1);const old=hasInk?c.toDataURL():null;const w=c.clientWidth,h=160;c.width=w*dpr;c.height=h*dpr;ctx.setTransform(dpr,0,0,dpr,0,0);ctx.lineWidth=2.2;ctx.lineCap='round';ctx.lineJoin='round';ctx.strokeStyle='#142b43';if(old){const im=new Image();im.onload=()=>ctx.drawImage(im,0,0,w,h);im.src=old}}
+ function resize(){
+  const dpr=Math.max(1,window.devicePixelRatio||1);
+  const old=hasInk?c.toDataURL():null;
+  const w=Math.max(1,c.clientWidth);
+  const h=Math.max(1,c.clientHeight||160);
+  c.width=Math.round(w*dpr);
+  c.height=Math.round(h*dpr);
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+  ctx.lineWidth=2.2;ctx.lineCap='round';ctx.lineJoin='round';ctx.strokeStyle='#142b43';
+  if(old){const im=new Image();im.onload=()=>ctx.drawImage(im,0,0,w,h);im.src=old}
+ }
  function point(e){const r=c.getBoundingClientRect();return{x:e.clientX-r.left,y:e.clientY-r.top}}
- c.addEventListener('pointerdown',e=>{e.preventDefault();drawing=true;hasInk=true;c.setPointerCapture(e.pointerId);const p=point(e);ctx.beginPath();ctx.moveTo(p.x,p.y)});
- c.addEventListener('pointermove',e=>{if(!drawing)return;e.preventDefault();const p=point(e);ctx.lineTo(p.x,p.y);ctx.stroke()});
+ c.addEventListener('pointerdown',e=>{
+  e.preventDefault();drawing=true;hasInk=true;
+  try{c.setPointerCapture(e.pointerId)}catch(_){}
+  const p=point(e);ctx.beginPath();ctx.moveTo(p.x,p.y);ctx.lineTo(p.x+.1,p.y+.1);ctx.stroke();
+ });
+ c.addEventListener('pointermove',e=>{
+  if(!drawing)return;e.preventDefault();
+  const events=typeof e.getCoalescedEvents==='function'?e.getCoalescedEvents():[e];
+  events.forEach(ev=>{const p=point(ev);ctx.lineTo(p.x,p.y);ctx.stroke()});
+ });
  ['pointerup','pointercancel','lostpointercapture'].forEach(ev=>c.addEventListener(ev,()=>drawing=false));
- window.addEventListener('resize',resize);resize();
+ window.addEventListener('resize',resize);
+ window.addEventListener('beforeprint',resize);window.addEventListener('afterprint',resize);
+ if(typeof ResizeObserver==='function'){
+  let resizeFrame=0;
+  new ResizeObserver(()=>{cancelAnimationFrame(resizeFrame);resizeFrame=requestAnimationFrame(resize)}).observe(c);
+ }
+ resize();
  return {clear(){ctx.save();ctx.setTransform(1,0,0,1,0,0);ctx.clearRect(0,0,c.width,c.height);ctx.restore();hasInk=false},mark(){hasInk=true},data(){return hasInk?c.toDataURL('image/png'):''}};
 }
 const sigs={sigCliente:setupCanvas('sigCliente'),sigTecnico:setupCanvas('sigTecnico')};
