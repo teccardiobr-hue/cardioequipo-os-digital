@@ -42,10 +42,9 @@ button:active{transform:translateY(1px)}
 .login-screen:after{content:'';position:absolute;width:42vw;height:42vw;max-width:520px;max-height:520px;border-radius:50%;background:radial-gradient(circle,rgba(25,117,190,.16),transparent 68%);filter:blur(10px);animation:loginGlow 7s ease-in-out infinite}
 @keyframes loginGrid{from{transform:rotateX(10deg) rotateZ(-4deg) translate3d(0,0,0)}to{transform:rotateX(10deg) rotateZ(-4deg) translate3d(45px,45px,0)}}
 @keyframes loginGlow{0%,100%{transform:translate3d(-28vw,18vh,0) scale(.85)}50%{transform:translate3d(28vw,-16vh,0) scale(1.15)}}
-@keyframes loginWatermarkTop{0%,100%{opacity:.18;transform:translate(-50%,0) rotate(-12deg)}20%{opacity:.48;transform:translate(-42%,0) rotate(-12deg)}50%{opacity:.22;transform:translate(-58%,0) rotate(-12deg)}80%{opacity:.42;transform:translate(-50%,0) rotate(-12deg)}}
-@keyframes loginWatermarkBottom{0%,100%{opacity:.16;transform:translate(-50%,0) rotate(-12deg)}30%{opacity:.44;transform:translate(-58%,0) rotate(-12deg)}65%{opacity:.24;transform:translate(-42%,0) rotate(-12deg)}85%{opacity:.48;transform:translate(-50%,0) rotate(-12deg)}}
-.login-watermark{position:absolute;z-index:2;left:50%;top:24%;pointer-events:none;user-select:none;color:#d7ecfb;font-size:clamp(22px,3vw,42px);font-weight:900;letter-spacing:.08em;text-transform:uppercase;text-shadow:0 0 24px rgba(114,188,238,.75);white-space:nowrap;transform-origin:center;animation:loginWatermarkTop 4s ease-in-out infinite}
-.login-watermark-secondary{top:78%;animation-name:loginWatermarkBottom;animation-delay:1.2s}
+@keyframes loginWatermark{0%,100%{opacity:.12}35%{opacity:.34}65%{opacity:.18}85%{opacity:.38}}
+.login-watermark{position:absolute;z-index:2;pointer-events:none;user-select:none;color:#d7ecfb;font-size:clamp(13px,1.65vw,23px);font-weight:800;letter-spacing:.07em;text-transform:uppercase;text-shadow:0 0 16px rgba(114,188,238,.55);white-space:nowrap;transform-origin:center;transform:rotate(-12deg);animation:loginWatermark 3.4s ease-in-out infinite}
+.login-watermark.w1{left:8%;top:13%}.login-watermark.w2{left:63%;top:16%;animation-delay:.35s}.login-watermark.w3{left:31%;top:28%;animation-delay:.7s}.login-watermark.w4{left:78%;top:31%;animation-delay:1.05s}.login-watermark.w5{left:6%;top:43%;animation-delay:1.4s}.login-watermark.w6{left:69%;top:48%;animation-delay:1.75s}.login-watermark.w7{left:23%;top:62%;animation-delay:2.1s}.login-watermark.w8{left:78%;top:68%;animation-delay:2.45s}.login-watermark.w9{left:8%;top:79%;animation-delay:2.8s}.login-watermark.w10{left:54%;top:86%;animation-delay:3.15s}
 .login-box{position:relative;z-index:3;width:min(420px,100%);background:rgba(9,13,18,.94);border:1px solid rgba(255,255,255,.16);border-radius:18px;padding:28px;box-shadow:0 18px 50px #0008,0 0 30px rgba(36,120,190,.08);backdrop-filter:blur(8px)}
 .login-box .field label{color:#e6edf5}
 .login-box input{color:#fff;background:#101820;border-color:#7d8792}
@@ -68,7 +67,7 @@ button:active{transform:translateY(1px)}
 .toast{display:none;margin-top:12px;padding:10px 12px;border-radius:9px;background:#e8f7ee;color:#17643a;font-size:13px}
 .footer{text-align:center;color:#8290a0;font-size:11px;padding:20px}
 #printTemplate{display:none}
-@media(max-width:650px){.login-watermark{top:17%;font-size:22px}.login-watermark-secondary{top:83%}.app{padding:10px}.top{padding:14px}.brand{font-size:18px}h1{font-size:16px}.grid,.grid.three{grid-template-columns:1fr}.actions button{flex:1 1 100%}.card{padding:15px}}
+@media(max-width:650px){.login-watermark{font-size:14px}.login-watermark.w1{left:5%;top:12%}.login-watermark.w2{left:58%;top:16%}.login-watermark.w3{left:25%;top:29%}.login-watermark.w4{left:70%;top:34%}.login-watermark.w5{left:4%;top:43%}.login-watermark.w6{left:62%;top:48%}.login-watermark.w7{left:16%;top:63%}.login-watermark.w8{left:68%;top:69%}.login-watermark.w9{left:5%;top:81%}.login-watermark.w10{left:50%;top:88%}.app{padding:10px}.top{padding:14px}.brand{font-size:18px}h1{font-size:16px}.grid,.grid.three{grid-template-columns:1fr}.actions button{flex:1 1 100%}.card{padding:15px}}
 @media print{
   @page{size:A4 portrait;margin:7mm}
   html,body{width:100%;min-height:0;background:#fff!important}
@@ -115,8 +114,16 @@ button:active{transform:translateY(1px)}
 </head>
 <body>
 <main id="loginScreen" class="login-screen" aria-label="Tela de acesso">
- <div class="login-watermark" aria-hidden="true">Cardioequipo</div>
- <div class="login-watermark login-watermark-secondary" aria-hidden="true">Cardioequipo</div>
+ <div class="login-watermark w1" aria-hidden="true">Cardioequipo</div>
+ <div class="login-watermark w2" aria-hidden="true">Cardioequipo</div>
+ <div class="login-watermark w3" aria-hidden="true">Cardioequipo</div>
+ <div class="login-watermark w4" aria-hidden="true">Cardioequipo</div>
+ <div class="login-watermark w5" aria-hidden="true">Cardioequipo</div>
+ <div class="login-watermark w6" aria-hidden="true">Cardioequipo</div>
+ <div class="login-watermark w7" aria-hidden="true">Cardioequipo</div>
+ <div class="login-watermark w8" aria-hidden="true">Cardioequipo</div>
+ <div class="login-watermark w9" aria-hidden="true">Cardioequipo</div>
+ <div class="login-watermark w10" aria-hidden="true">Cardioequipo</div>
  <form id="loginForm" class="login-box">
   <img class="login-brand" src="login-brand.png" alt="Cardioequipo">
   <div class="login-assistance">Assistência Técnica</div>
