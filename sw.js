@@ -1,10 +1,11 @@
-const CACHE_NAME = 'cardioequipo-os-v5';
+const CACHE_NAME = 'cardioequipo-os-v6';
 const APP_ASSETS = [
   './',
   './index.html',
   './manifest.webmanifest',
   './cardioequipo-logo.jpg',
   './login-cardioequipo.png',
+  './login-brand.png',
   './icon-192.png',
   './icon-512.png'
 ];
