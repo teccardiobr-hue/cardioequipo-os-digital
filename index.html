@@ -42,8 +42,9 @@ button:active{transform:translateY(1px)}
 .login-screen:after{content:'';position:absolute;width:42vw;height:42vw;max-width:520px;max-height:520px;border-radius:50%;background:radial-gradient(circle,rgba(25,117,190,.16),transparent 68%);filter:blur(10px);animation:loginGlow 7s ease-in-out infinite}
 @keyframes loginGrid{from{transform:rotateX(10deg) rotateZ(-4deg) translate3d(0,0,0)}to{transform:rotateX(10deg) rotateZ(-4deg) translate3d(45px,45px,0)}}
 @keyframes loginGlow{0%,100%{transform:translate3d(-28vw,18vh,0) scale(.85)}50%{transform:translate3d(28vw,-16vh,0) scale(1.15)}}
-@keyframes loginWatermark{0%,100%{opacity:.09;transform:rotate(-12deg) scale(.96)}50%{opacity:.24;transform:rotate(-12deg) scale(1.03)}}
-.login-watermark{position:absolute;z-index:2;pointer-events:none;user-select:none;color:#b9dcf7;font-size:clamp(38px,8vw,92px);font-weight:900;letter-spacing:.08em;text-transform:uppercase;text-shadow:0 0 22px rgba(114,188,238,.55);white-space:nowrap;transform-origin:center;animation:loginWatermark 3s ease-in-out infinite}
+@keyframes loginWatermark{0%,100%{opacity:.16;transform:translateX(-50%) rotate(-12deg) scale(.96)}50%{opacity:.38;transform:translateX(-50%) rotate(-12deg) scale(1.03)}}
+.login-watermark{position:absolute;z-index:2;left:50%;top:18%;pointer-events:none;user-select:none;color:#d7ecfb;font-size:clamp(42px,8vw,96px);font-weight:900;letter-spacing:.08em;text-transform:uppercase;text-shadow:0 0 26px rgba(114,188,238,.75);white-space:nowrap;transform-origin:center;animation:loginWatermark 2.6s ease-in-out infinite}
+.login-watermark-bottom{top:82%}
 .login-box{position:relative;z-index:3;width:min(420px,100%);background:rgba(9,13,18,.94);border:1px solid rgba(255,255,255,.16);border-radius:18px;padding:28px;box-shadow:0 18px 50px #0008,0 0 30px rgba(36,120,190,.08);backdrop-filter:blur(8px)}
 .login-box .field label{color:#e6edf5}
 .login-box input{color:#fff;background:#101820;border-color:#7d8792}
@@ -114,6 +115,7 @@ button:active{transform:translateY(1px)}
 <body>
 <main id="loginScreen" class="login-screen" aria-label="Tela de acesso">
  <div class="login-watermark" aria-hidden="true">Cardioequipo</div>
+ <div class="login-watermark login-watermark-bottom" aria-hidden="true">Cardioequipo</div>
  <form id="loginForm" class="login-box">
   <img class="login-brand" src="login-brand.png" alt="Cardioequipo">
   <div class="login-assistance">Assistência Técnica</div>
@@ -350,6 +352,10 @@ window.addEventListener('appinstalled',()=>{
  toast('Aplicativo instalado com sucesso.');
 });
 if('serviceWorker' in navigator){
+ let reloadedForUpdate=false;
+ navigator.serviceWorker.addEventListener('controllerchange',()=>{
+  if(!reloadedForUpdate){reloadedForUpdate=true;location.reload()}
+ });
  window.addEventListener('load',async()=>{
   try{
    const registration=await navigator.serviceWorker.register('./sw.js');
