@@ -1,4 +1,4 @@
-const CACHE_NAME = 'cardioequipo-os-v7';
+const CACHE_NAME = 'cardioequipo-os-v8';
 const APP_ASSETS = [
   './',
   './index.html',
