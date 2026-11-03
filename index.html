@@ -675,11 +675,24 @@ function finishAndPrint(){
  if(!sigs.sigCliente.data()){toast('Solicite a assinatura do responsável pelo cliente antes de finalizar.');return}
  if(!saveToHistory())return;
  try{
-  createOsPdf().save(osPdfFileName());
+  downloadOsPdf(createOsPdf(),osPdfFileName());
   toast('OS arquivada e PDF gerado com sucesso.');
  }catch(error){
+  console.error('Falha ao gerar PDF da OS:',error);
   toast('A OS foi arquivada, mas o PDF não pôde ser gerado.');
  }
+}
+function downloadOsPdf(pdf,fileName){
+ const blob=pdf.output('blob');
+ const url=URL.createObjectURL(blob);
+ const link=document.createElement('a');
+ link.href=url;
+ link.download=fileName;
+ link.style.display='none';
+ document.body.append(link);
+ link.click();
+ link.remove();
+ setTimeout(()=>URL.revokeObjectURL(url),10000);
 }
 function validateForPdf(){
  if(!window.jspdf?.jsPDF){toast('O gerador de PDF não carregou. Verifique sua conexão e atualize a página.');return false}
@@ -786,7 +799,7 @@ async function sendWhatsAppPdf(){
  if(navigator.canShare && navigator.canShare({files:[file]})){
   try{await navigator.share({files:[file],title:'Ordem de Servico - '+val('os'),text:'OS '+val('os')+' da Cardioequipo'});return}catch(e){}
  }
- pdf.save(fileName);
+ downloadOsPdf(pdf,fileName);
  const text=encodeURIComponent('Ordem de Servico OS '+val('os')+' da Cardioequipo concluida. Envie o PDF salvo na pasta de Downloads.');
  window.open('https://wa.me/?text='+text,'_blank','noopener');
  toast('PDF salvo em Downloads. Anexe o arquivo na conversa do WhatsApp.');
