@@ -109,6 +109,8 @@ button:active{transform:translateY(1px)}
   .print-signatures .signature,.signature{display:block;width:100%;height:16mm!important;
       border:1px solid #777;border-radius:3mm;background:#fff;touch-action:auto}
   .print-signature-copy{display:none!important}
+  .print-signatures .signature{display:none!important}
+  .print-signature-image{display:block!important;width:100%;height:16mm!important;object-fit:contain;border:1px solid #777;border-radius:3mm;background:#fff}
 }
 </style>
 </head>
@@ -218,11 +220,13 @@ button:active{transform:translateY(1px)}
   <div class="field">
    <div class="sighead"><b><span id="nomeTecnicoAssinatura">Técnico responsável</span> - assinatura</b><button class="outline no-print sig-clear" onclick="clearSig('sigTecnico')" aria-label="Limpar assinatura do técnico" title="Limpar assinatura">×</button></div>
    <canvas id="sigTecnico" class="signature" aria-label="Área para assinatura do técnico"></canvas>
+   <img id="sigTecnicoPrint" class="print-signature-image" alt="Assinatura do técnico" style="display:none">
    <div class="muted print-signature-copy">Assine com o dedo, caneta digital ou mouse.</div>
   </div>
   <div class="field">
    <div class="sighead"><b><span id="nomeResponsavelAssinatura">Responsável pelo cliente</span> - assinatura</b><button class="outline no-print sig-clear" onclick="clearSig('sigCliente')" aria-label="Limpar assinatura do cliente" title="Limpar assinatura">×</button></div>
    <canvas id="sigCliente" class="signature" aria-label="Área para assinatura do cliente"></canvas>
+   <img id="sigClientePrint" class="print-signature-image" alt="Assinatura do cliente" style="display:none">
    <div class="muted print-signature-copy">Assine com o dedo, caneta digital ou mouse.</div>
   </div>
  </div>
@@ -399,6 +403,8 @@ function syncPrintTemplate(){
  Object.keys(sigs||{}).forEach(id=>{
   const img=document.querySelector(`[data-signature="${id}"]`);
   if(img)img.src=sigs[id].data()||'';
+  const printImg=document.getElementById(id+'Print');
+  if(printImg)printImg.src=sigs[id].data()||'';
  });
 }
 function findValue(text,labels){
@@ -675,6 +681,9 @@ function finishAndPrint(){
  if(!sigs.sigCliente.data()){toast('Solicite a assinatura do responsável pelo cliente antes de finalizar.');return}
  if(!saveToHistory())return;
  syncPrintTemplate();
+ Object.keys(sigs).forEach(id=>{
+  document.getElementById(id+'Print').src=sigs[id].data()||'';
+ });
  toast('OS arquivada. Selecione imprimir ou salvar como PDF.');
  setTimeout(()=>window.print(),100);
 }
