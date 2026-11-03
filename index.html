@@ -674,13 +674,9 @@ function finishAndPrint(){
  if(missing.length){toast('Antes de finalizar, preencha: '+missing.join(', ')+'.');return}
  if(!sigs.sigCliente.data()){toast('Solicite a assinatura do responsável pelo cliente antes de finalizar.');return}
  if(!saveToHistory())return;
- try{
-  downloadOsPdf(createOsPdf(),osPdfFileName());
-  toast('OS arquivada e PDF gerado com sucesso.');
- }catch(error){
-  console.error('Falha ao gerar PDF da OS:',error);
-  toast('A OS foi arquivada, mas o PDF não pôde ser gerado.');
- }
+ syncPrintTemplate();
+ toast('OS arquivada. Selecione imprimir ou salvar como PDF.');
+ setTimeout(()=>window.print(),100);
 }
 function downloadOsPdf(pdf,fileName){
  const blob=pdf.output('blob');
