@@ -1,4 +1,5 @@
-const CACHE_NAME = 'cardioequipo-os-v21';
+const CACHE_NAME = 'cardioequipo-os-v22';
+const CACHE_PREFIX = 'cardioequipo-os-';
 const APP_ASSETS = [
   './',
   './index.html',
@@ -18,7 +19,9 @@ self.addEventListener('install', event => {
 self.addEventListener('activate', event => {
   event.waitUntil(
     caches.keys()
-      .then(keys => Promise.all(keys.filter(key => key !== CACHE_NAME).map(key => caches.delete(key))))
+      .then(keys => Promise.all(keys
+        .filter(key => key.startsWith(CACHE_PREFIX) && key !== CACHE_NAME)
+        .map(key => caches.delete(key))))
       .then(() => self.registration.navigationPreload?.enable())
   );
   self.clients.claim();
@@ -26,13 +29,30 @@ self.addEventListener('activate', event => {
 
 self.addEventListener('fetch', event => {
   if (event.request.method !== 'GET') return;
-  event.respondWith(
-    fetch(event.request).then(response => {
-      if (response.ok && new URL(event.request.url).origin === self.location.origin) {
-        const copy = response.clone();
-        caches.open(CACHE_NAME).then(cache => cache.put(event.request, copy));
+
+  const requestUrl = new URL(event.request.url);
+  const isSameOrigin = requestUrl.origin === self.location.origin;
+
+  event.respondWith((async () => {
+    try {
+      const response = await fetch(event.request);
+      if (isSameOrigin && response.ok) {
+        const cache = await caches.open(CACHE_NAME);
+        await cache.put(event.request, response.clone());
       }
       return response;
-    }).catch(() => caches.match(event.request).then(cached => cached || caches.match('./index.html')))
-  );
+    } catch (error) {
+      const cached = await caches.match(event.request);
+      if (cached) return cached;
+
+      // Only app navigations should fall back to the app shell. Returning HTML
+      // for a failed script, image, or cross-origin CDN request breaks loading.
+      if (isSameOrigin && event.request.mode === 'navigate') {
+        const appShell = await caches.match('./index.html');
+        if (appShell) return appShell;
+      }
+
+      return Response.error();
+    }
+  })());
 });
